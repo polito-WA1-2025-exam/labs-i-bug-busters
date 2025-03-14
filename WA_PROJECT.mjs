@@ -1,6 +1,5 @@
 "use strict";
 
-
 function Bag(bagid, size, type, price, establishment, content=[]){
     this.bagid = bagid;
     this.size = size;
@@ -28,26 +27,27 @@ function Res_sto(rsid,name, address, phone, category) {
     this.add = (bag) => this.bags.push(bag);
 
     //feature to remove a bag from a list; an update is needed to use the id
-    this.remove = function remove(item){
-           
-     this.bags.forEach(bag =>{ 
-        const index = bag.content.findIndex(cont => cont.name == item);
-        bag.content.splice(index,1)
-                                        })
- 
+    this.remove = function remove(item, bid){
+        //return the bag with a specified ID
+       let rBag = this.bags.find((bag) => bag.bagid == bid);
+       //search for the item id
+       const index = rBag.content.findIndex((bagItem) => bagItem == item);
+       //remove the item using the id
+       rBag.content.splice(index, 1);
      }
  
-     this.addElement = function addElement(element, quantity){
-         this.bags.forEach(bag =>bag.content.push({"name" : element, "quantity":quantity }));
+     this.addElement = function addElement(bid, element, quantity){
+        //search for the bagid and add the new element
+         this.bags.find((bag) => bag.bagid == bid).content.push({"name" : element, "quantity":quantity });
      }
  
-     this.modifyQ = function modifyQ(item, newQ){
-        
-     this.bags.forEach(bag =>{ 
-        const index = bag.content.findIndex(cont => cont.name == item);
-        bag.content[index].quantity = newQ;
-                                        })
- 
+     this.modifyQ = function modifyQ(bid, item, newQ){
+        let rBag = this.bags.find((bag) => bag.bagid == bid);
+        //search for the item id
+        const index = rBag.content.findIndex((bagItem) => bagItem.name == item);
+        //update the quantity of the item
+        rBag.content[index].quantity = newQ;
+    
      }
     
 }
@@ -57,45 +57,22 @@ function List_res_sto(){
 
     this.add = (e_rs) => this.rs.push(e_rs);
 
-      // Sorting method 
+      // Sorting method by alphabetical order
       this.sortByName = function() {
         this.rs.sort((a, b) => a.name.localeCompare(b.name));
     };
 
-    this.find = (p) => this.rs.flatMap(store => store.bags).filter((bag) => bag.price < p);
+  
+    //filter by  resturant/store by the name
+    this.findName = (name) => this.rs.find((p) => p.name == name);
+    //filter by the bag  price range
+    this.findByPriceRange = (userPrice) => this.rs.flatMap((res) => res.bags).filter((bag)=> bag.price <= userPrice );
+    //filter by the bags size
+    this.findBySize = (userSize) => this.rs.flatMap((res) => res.bags).filter((bag)=> bag.size == userSize );
+    //filter by the bags type
+    this.findByType = (userType) => this.rs.flatMap((res) => res.bags).filter((bag)=> bag.type == userType );
+    //filter by the content of the bag, parameter reset
+    this.findByContet = (...userContent) =>  this.rs.flatMap((res) => res.bags).find((bag) => userContent.every(element => bag.content.map((x)=>x.name).includes(element)));
 
 }
 
-const list_of_rs = new List_res_sto();
-
-// examples resturant
-const store1 = new Res_sto("Supermarket A", "Via Roma 10", "123456789", "Grocery");
-const store2 = new Res_sto("Supermarket B", "Corso Milano 20", "456123789", "Grocery");
-const restaurant1 = new Res_sto("Restaurant X", "Piazza Duomo 5", "987654321", "Italian");
-
-// Aggiunta di bag
-store1.add(new Bag("Large", "Surprise", 2.5, store1.name));
-store2.add(new Bag("Medium", "Regular", 1.5, store2.name, [
-    { name: "Apple", quantity: 2 },
-    { name: "Banana", quantity: 1 },
-    { name: "Orange", quantity: 3 }
-]));
-restaurant1.add(new Bag("Small", "Regular", 1.0, restaurant1.name, [{name:"pizza", quantity:2}]));
-
-
-list_of_rs.add(store1);
-list_of_rs.add(store2);
-list_of_rs.add(restaurant1);
-
-//list_of_rs.sort()
-
-// print the list of the resturnat/store ordered alphabetically
-const list=list_of_rs.rs;
-
-store2.addElement("Cetriolo",6)
-//list.forEach(i => {console.log(i)})
-store2.modifyQ('Apple',9)
-store2.remove('Cetriolo')
-list.forEach(i => i.bags.forEach(j=> console.log(j)) )
-
-//console.log(list_of_rs.find(1.2).flatMap(a => a.content));
