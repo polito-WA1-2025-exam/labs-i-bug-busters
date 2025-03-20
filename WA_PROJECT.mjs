@@ -1,5 +1,7 @@
 "use strict";
 
+import dayjs from 'dayjs';
+
 function Bag(bagid, size, type, price, establishment, content=[]){
     this.bagid = bagid;
     this.size = size;

@@ -1,61 +1,64 @@
 "use strict";
 
-// Simuliamo un database di utenti
-const users = [];
+import dayjs from 'dayjs';
 
-// Funzione per registrare un nuovo utente
-export function registerUser(id, username, password, email) {
-    if (users.some(user => user.username === username)) {
-        throw new Error("Username already taken.");
+function User(id, name, email, password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.allergies = [];
+        this.shoppingCart = [];
+        this.addAllergycreatedAt = dayjs().format('YYYY-MM-DD HH:mm:ss');
+
+        this.addAllergy = (allergy) => this.allergies.push(allergy);
+        this.removeAllergy = (allergy) => this.allergies = this.allergies.filter((a) => a !== allergy);
+        this.getAllAllergies = () => this.allergies;
+
+        this.addToCart = (bagId) => this.shoppingCart.push(bagId);
+        this.removeFromCart = (bagId) => this.shoppingCart = this.shoppingCart.filter((b) => b !== bagId);
+        this.getCart = () => this.shoppingCart;
+
+}
+
+const userCollection = [];
+
+function addUser(user) {
+    userCollection.push(user);
+}
+
+function getUserById(id) {
+    return userCollection.find((u) => u.id === id);
+}
+
+function getUserByEmail(email) {
+    return userCollection.find((u) => u.email === email);
+}
+
+function getAllUsers() {
+    return userCollection;
+}
+
+function updateUser(id, updatedFields) {
+    const user = getUserById(id);
+    if (user) {
+        Object.assign(user, updatedFields);
     }
-    const newUser = {
-        id,
-        username,
-        password,
-        email,
-        reservations: []
-    };
-    users.push(newUser);
-    return newUser;
 }
 
-// Funzione per effettuare il login
-export function loginUser(username, password) {
-    const user = users.find(user => user.username === username && user.password === password);
-    if (!user) {
-        throw new Error("Invalid username or password.");
+function deleteUser(id) {
+    const userIndex = userCollection.findIndex((u) => u.id === id);
+    if (userIndex !== -1) {
+        userCollection.splice(userIndex, 1);
     }
-    return user;
 }
 
-// Funzione per effettuare il logout (simulato, lato server sarebbe gestito con sessioni)
-export function logoutUser() {
-    return "User logged out.";
-}
-
-// Funzione per ottenere i dati di un utente tramite ID
-export function getUserDataById(userId) {
-    const user = users.find(user => user.id === userId);
-    if (!user) {
-        throw new Error("User not found.");
-    }
-    return user;
-}
-
-// Funzione per prenotare una bag
-export function reserveBag(userId, bag) {
-    const user = users.find(user => user.id === userId);
-    if (!user) {
-        throw new Error("User not found.");
-    }
-    user.reservations.push(bag);
-}
-
-// Funzione per ottenere le prenotazioni di un utente tramite ID
-export function getUserReservationsById(userId) {
-    const user = users.find(user => user.id === userId);
-    if (!user) {
-        throw new Error("User not found.");
-    }
-    return user.reservations;
-}
+export { 
+    User,
+    addUser, 
+    getUserById, 
+    getUserByEmail, 
+    getAllUsers, 
+    updateUser, 
+    deleteUser
+};
