@@ -103,7 +103,7 @@ function ListOfEstablishments() {
             if(err)
                 reject(err);
             else{
-                const result = rows.map((row) =>new Res_sto(row.rsid, row.name, row.address, row.phone, row.category));
+                const result = rows.map((row) =>new Establishment(row.rsid, row.name, row.address, row.phone, row.category));
                 resolve(result);
             }
             })
