@@ -1,6 +1,7 @@
 "use strict"
 
 import sqlite from 'sqlite3';
+import dayjs from 'dayjs';
 
 const db = new sqlite.Database('database.sqlite', (err) => { if (err) throw err });
 
@@ -16,10 +17,13 @@ function Bag(bagid, size, type, price, establishment, status, content = []) {
     this.content = type == "Regular" ? content : [];
 
 }
-
+//TODO aggiungere il tempo (per le prenotazioni)
+//aggiungere le bag surprise che non permettono di vedere il contenuto
+//aggiungere la possibilità di prendere il contenuto delle bag (se reguar)
+//
 
 //data of resturant/store with the list of bags
-function Res_sto(rsid, name, address, phone, category) {
+function Establishment(rsid, name, address, phone, category) {
     this.rsid = rsid;
     this.name = name;
     this.address = address;
@@ -87,7 +91,7 @@ function Res_sto(rsid, name, address, phone, category) {
 
 
 //List of the resturant/store
-function List_res_sto() {
+function ListOfEstablishments() {
     this.rs = [];
 
 
@@ -170,5 +174,5 @@ function List_res_sto() {
 }
 
 
-let p = new List_res_sto();
+
 
